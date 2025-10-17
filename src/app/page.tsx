@@ -1,11 +1,19 @@
-import React from 'react'
+'use client'
+
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 const page = () => {
+
+    const trpc = useTRPC();  
+    const {data: users} = useQuery(trpc.getUsers.queryOptions()); 
+
   return (
     <div>
-      hello world 
+      {JSON.stringify(users)}
     </div>
   )
 }
 
-export default page
+export default page;  
+ 
