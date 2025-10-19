@@ -1,17 +1,22 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { requireAuth } from "@/lib/auth-utils";
-import { caller } from "@/trpc/server";
 
 
-const page = async() => {
+const page = () => {
   // const { data } = authClient.useSession();
-  await requireAuth(); 
-  const data = await caller.getUsers(); 
+  // await requireAuth(); 
+  // const data = await caller.getUsers(); 
   return (
     <div className="">
-      {JSON.stringify(data)}
-      
+      {/* {JSON.stringify(data)} */}
+      <Button
+        onClick={() => authClient.signOut()}
+      >
+        Sign out
+      </Button>
+
     </div>
   )
 }
