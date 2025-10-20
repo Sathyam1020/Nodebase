@@ -1,7 +1,14 @@
-import prisma from '@/lib/database';
-import { createTRPCRouter, protectedProcedure } from '../init';
 import { inngest } from '@/inngest/client';
+import prisma from '@/lib/database';
+import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
+import { TRPCError } from '@trpc/server';
+
 export const appRouter = createTRPCRouter({
+
+  testAi: baseProcedure.mutation(async() => {
+    // throw new TRPCError({ code: "BAD_REQUEST", message: "AI function is disabled temporarily."});
+    await inngest.send({name: 'execute/ai'}); 
+  }), 
 
   //Get Workflows
   getWorkflows: protectedProcedure

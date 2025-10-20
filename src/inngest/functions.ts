@@ -1,24 +1,34 @@
 import prisma from "@/lib/database";
 import { inngest } from "./client";
+import * as Sentry from "@sentry/nextjs";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText } from "ai";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
-  { event: "test/hello.world" },
+const google = createGoogleGenerativeAI()
+
+export const execute = inngest.createFunction(
+  { id: "execute-ai" },
+  { event: "execute/ai" },
   async ({ event, step }) => {
-    await step.sleep("wait-a-moment", "5s");
 
-    await step.sleep("wait-a-moment", "5s");
+    await step.sleep("pretend", "5s")
+    console.error("This is an error log for testing Sentry integration with Vercel AI SDK");
+    Sentry.logger.info("User triggered test log", { log_source: 'sentry_test'})
 
-    await step.sleep("wait-a-moment", "5s");
-
-    return { message: `Hello ${event.data.email}!` };
-
-    await step.run("create-workflow", () => {
-        return prisma.workflow.create({
-            data: {
-                name: "test workflow from inngest"
+     const { steps } = await step.ai.wrap("gemini-generate-text",
+        generateText, 
+        {
+            model: google('gemini-2.5-flash'),
+            system: "You are a helpful assistant that helps in math.",
+            prompt: "What is 2 + 2 ",
+            experimental_telemetry: {
+                isEnabled: true,
+                recordInputs: true,
+                recordOutputs: true,
             }
-        })
-    })
-  },
+        }
+     ); 
+
+     return steps; 
+  }
 ); 
